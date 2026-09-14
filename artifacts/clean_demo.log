@@ -1,7 +1,0 @@
-Synthetic DEMO saved to artifacts\clean_demo_output.json
-INFO lumenforge.test: starting crawl
-INFO lumenforge.test: page 1/3 https://lumenforge.test/ [homepage]
-INFO lumenforge.test: page 2/3 https://lumenforge.test/company [discovered: Our company (priority 1)]
-INFO lumenforge.test: page 3/3 https://lumenforge.test/contact [discovered: Contact (priority 2)]
-INFO lumenforge.test: extracting from 1 distinct usable pages
-INFO lumenforge.test: success, 0.5s, 0 input / 0 output tokens, 1 requests
