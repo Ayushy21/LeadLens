@@ -29,6 +29,9 @@ def no_external_dns(monkeypatch):
     monkeypatch.setattr(socket, "getaddrinfo", guarded)
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.delenv("TAVILY_API_KEY", raising=False)
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
+    monkeypatch.delenv("LLM_PROVIDER", raising=False)
     # A developer's real credentials/settings must never affect offline test cases.
     monkeypatch.setitem(Settings.model_config, "env_file", None)
 

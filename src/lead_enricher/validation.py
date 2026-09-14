@@ -15,7 +15,7 @@ from lead_enricher.models import (
 from lead_enricher.urls import linkedin_profile
 
 RELATIONSHIP = re.compile(
-    r"\b(founder|co-founder|cofounder|chief|ceo|cto|cfo|coo|president|director|head of|"
+    r"\b(founders?|co-founders?|cofounders?|chief|ceo|cto|cfo|coo|president|director|head of|"
     r"engineer|our team|team member|leadership|works at|works for|employee)\b",
     re.I,
 )
@@ -156,7 +156,10 @@ def ground(
             ):
                 trusted.append(evidence)
         if not name or len(name) > 100 or not trusted:
-            issues.append("team_members: unsupported company relationship or external testimonial")
+            issues.append(
+                f"team_members: {name[:100]!r} has an unsupported company relationship "
+                "or external testimonial; omit this person unless valid company evidence exists"
+            )
             continue
         if name.casefold() in seen:
             continue
@@ -174,7 +177,10 @@ def ground(
             if role_evidence:
                 member.role, member.role_evidence = role, role_evidence
             else:
-                issues.append("team_members.role: role not present in person-specific evidence")
+                issues.append(
+                    f"team_members.role: {name[:100]!r} role not present in person-specific "
+                    "evidence; use an exact observed title or null"
+                )
         if person.linkedin_url:
             profile = linkedin_profile(person.linkedin_url)
             supported = []
@@ -197,7 +203,10 @@ def ground(
                 member.linkedin_status = "first_party_link"
                 member.profile_evidence = supported
             else:
-                issues.append("team_members.linkedin_url: no observed person/profile association")
+                issues.append(
+                    f"team_members.linkedin_url: {name[:100]!r} has no observed person/profile "
+                    "association; set linkedin_url to null and profile_evidence to []"
+                )
         result.team_members.append(member)
     result.warnings.extend(dict.fromkeys(issues))
     return result, list(dict.fromkeys(issues))

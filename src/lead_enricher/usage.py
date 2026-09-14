@@ -7,11 +7,11 @@ def estimate_cost(usage: Usage, settings: Settings) -> None:
     if usage.request_count == 0:
         usage.cost_reason = "No provider requests; no billed usage observed"
         return
-    if settings.pricing_model != settings.openai_model:
+    if settings.pricing_model != settings.model_name:
         usage.cost_reason = "Pricing absent or does not match configured model"
         return
     if any(
-        m != settings.openai_model and not m.startswith(settings.openai_model + "-")
+        m != settings.model_name and not m.startswith(settings.model_name + "-")
         for m in usage.models
     ):
         usage.cost_reason = "Provider model does not match pricing model"

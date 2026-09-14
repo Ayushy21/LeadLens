@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Self
+from typing import Literal, Self
 
 from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -9,8 +9,11 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", extra="ignore", env_ignore_empty=True
     )
+    llm_provider: Literal["openai", "gemini"] = "openai"
     openai_api_key: SecretStr = SecretStr("")
     openai_model: str = Field(default="gpt-4.1-mini", min_length=1)
+    gemini_api_key: SecretStr = SecretStr("")
+    gemini_model: str = Field(default="gemini-3.5-flash-lite", pattern=r"^gemini-[a-zA-Z0-9.\-]+$")
     tavily_api_key: SecretStr = SecretStr("")
     enable_search: bool = False
     max_pages_per_domain: int = Field(default=8, gt=0, le=50)
@@ -25,6 +28,7 @@ class Settings(BaseSettings):
     max_output_tokens: int = Field(default=3500, gt=0)
     max_llm_requests_per_domain: int = Field(default=4, gt=0, le=10)
     headed: bool = False
+    max_html_bytes: int = Field(default=12_000_000, gt=0, le=25_000_000)
     pricing_model: str | None = None
     input_price_per_million: float | None = Field(default=None, ge=0, allow_inf_nan=False)
     cached_input_price_per_million: float | None = Field(default=None, ge=0, allow_inf_nan=False)
@@ -52,11 +56,22 @@ class Settings(BaseSettings):
             )
         return self
 
+    @property
+    def model_name(self) -> str:
+        return self.gemini_model if self.llm_provider == "gemini" else self.openai_model
+
+    @property
+    def api_key(self) -> SecretStr:
+        return self.gemini_api_key if self.llm_provider == "gemini" else self.openai_api_key
+
     def require_live_key(self) -> None:
-        if not self.openai_api_key.get_secret_value().strip():
+        if not self.api_key.get_secret_value().strip():
             raise ValueError(
-                "Set OPENAI_API_KEY in .env or the environment, then rerun; demo is offline"
+                f"Set {self.llm_provider.upper()}_API_KEY in .env or the environment, "
+                "then rerun; demo is offline"
             )
 
     def redacted(self) -> dict[str, object]:
-        return self.model_dump(mode="json", exclude={"openai_api_key", "tavily_api_key"})
+        return self.model_dump(
+            mode="json", exclude={"openai_api_key", "gemini_api_key", "tavily_api_key"}
+        )

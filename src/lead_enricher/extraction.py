@@ -1,4 +1,5 @@
 import asyncio
+import json
 from dataclasses import dataclass, field
 from typing import Protocol
 
@@ -141,7 +142,7 @@ class Extractor:
         repaired = False
         for attempt in range(self.settings.max_llm_requests_per_domain):
             context = assemble_context(
-                sources, self.settings.openai_model, self.settings.max_context_tokens, repair
+                sources, self.settings.model_name, self.settings.max_context_tokens, repair
             )
             outcome.context = context
             if not context.text:
@@ -154,7 +155,9 @@ class Extractor:
             try:
                 try:
                     async with asyncio.timeout(timeout):
-                        reply = await self.provider.request(context.text, repair, timeout)
+                        reply = await self.provider.request(
+                            f"Target company domain: {domain}\n\n{context.text}", repair, timeout
+                        )
                 except TimeoutError as exc:
                     raise ProviderFailure("provider_timeout", retryable=True) from exc
             except ProviderFailure as exc:
@@ -174,7 +177,7 @@ class Extractor:
                     Error(
                         stage="llm",
                         code=exc.code,
-                        message="OpenAI extraction failed: " + exc.code,
+                        message=f"{self.settings.llm_provider} extraction failed: " + exc.code,
                         retryable=exc.retryable,
                     )
                 )
@@ -217,13 +220,43 @@ class Extractor:
                 return outcome
             if not repaired and attempt + 1 < self.settings.max_llm_requests_per_domain:
                 repaired = True
-                repair = " | ".join(issues[:5])
+                repair = (
+                    " | ".join(issues[:5])
+                    + "\n"
+                    + json.dumps(
+                        {
+                            "validated_draft": {
+                                "company_name": result.company_name,
+                                "company_overview": result.company_overview,
+                                "target_audience": result.target_audience,
+                                "field_evidence": {
+                                    field: [
+                                        e.model_dump(include={"source_id", "excerpt"})
+                                        for e in evidence
+                                    ]
+                                    for field, evidence in result.field_evidence.items()
+                                },
+                                "contact_points": [c.email for c in result.contact_points],
+                                "team_members": [
+                                    {
+                                        "name": p.name,
+                                        "role": p.role,
+                                        "linkedin_url": p.linkedin_url,
+                                    }
+                                    for p in result.team_members
+                                ],
+                            }
+                        },
+                        ensure_ascii=False,
+                    )
+                )
                 continue
             outcome.errors.append(
                 Error(
                     stage="validation",
                     code="unsupported_extraction",
-                    message="Unsupported fields removed after bounded repair",
+                    message="Unsupported fields removed after bounded repair: "
+                    + " | ".join(issues[:5]),
                 )
             )
             return outcome

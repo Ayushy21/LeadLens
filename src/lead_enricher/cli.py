@@ -58,6 +58,10 @@ async def doctor(settings: Settings, output_dir: Path) -> int:
     for package in ("leadlens", "playwright", "pydantic", "openai", "tiktoken", "httpx"):
         checks[package] = importlib.metadata.version(package)
     checks["openai_key_present"] = bool(settings.openai_api_key.get_secret_value())
+    checks["gemini_key_present"] = bool(settings.gemini_api_key.get_secret_value())
+    checks["llm_provider"] = settings.llm_provider
+    checks["model"] = settings.model_name
+    checks["selected_key_present"] = bool(settings.api_key.get_secret_value().strip())
     checks["optional_search_enabled"] = settings.enable_search
     checks["tavily_key_present"] = bool(settings.tavily_api_key.get_secret_value())
     try:
@@ -73,12 +77,14 @@ async def doctor(settings: Settings, output_dir: Path) -> int:
     except Exception:
         checks["chromium_launch"] = False
         checks["chromium_action"] = "Run: uv run python -m playwright install chromium"
-    if not checks["openai_key_present"]:
-        checks["openai_action"] = "Set OPENAI_API_KEY in .env; doctor does not call the LLM"
+    if not checks["selected_key_present"]:
+        checks["key_action"] = (
+            f"Set {settings.llm_provider.upper()}_API_KEY in .env; doctor does not call the LLM"
+        )
     print(json.dumps(checks, indent=2))
     return (
         0
-        if all(checks[k] for k in ("openai_key_present", "output_writable", "chromium_launch"))
+        if all(checks[k] for k in ("selected_key_present", "output_writable", "chromium_launch"))
         else 2
     )
 

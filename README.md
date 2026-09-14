@@ -1,7 +1,7 @@
 # LeadLens
 
 A Python pipeline that browses public company websites and uses an LLM to extract structured
-company information. It uses Playwright for JavaScript rendering, OpenAI for extraction, and
+company information. It uses Playwright for JavaScript rendering, Gemini or OpenAI for extraction, and
 Pydantic for output validation.
 
 ## Setup
@@ -18,7 +18,9 @@ On macOS/Linux, use `test -e .env || cp .env.example .env` for the last command.
 On Linux, install browser system dependencies with
 `uv run python -m playwright install --with-deps chromium` if needed.
 
-Set `OPENAI_API_KEY` in `.env`. The optional `TAVILY_API_KEY` enables external LinkedIn searches.
+Set `GEMINI_API_KEY` in `.env` with `LLM_PROVIDER=gemini` (as in `.env.example`).
+For OpenAI, use `LLM_PROVIDER=openai` and set `OPENAI_API_KEY` instead.
+The optional `TAVILY_API_KEY` enables external LinkedIn searches.
 The local `.env` file is excluded from Git; `.env.example` documents the available settings.
 
 ## Run
@@ -80,16 +82,22 @@ is not a calibrated probability of correctness.
 
 | Variable | Default | Purpose |
 |---|---|---|
+| `LLM_PROVIDER` | `openai` in code; `gemini` in `.env.example` | Provider to call |
+| `GEMINI_MODEL` | `gemini-3.5-flash-lite` | Gemini extraction model |
 | `OPENAI_MODEL` | `gpt-4.1-mini` | Extraction model |
 | `MAX_PAGES_PER_DOMAIN` | `8` | Maximum pages attempted per company |
 | `DOMAIN_CONCURRENCY` | `2` | Companies processed concurrently |
 | `DOMAIN_BUDGET_SECONDS` | `180` | Time budget per company |
 | `MAX_CONTEXT_TOKENS` | `8000` | Input token budget, including instructions and schema |
 | `ENABLE_SEARCH` | `false` | Optional Tavily search |
+| `MAX_HTML_BYTES` | `12000000` | Maximum rendered page size before text cleanup |
 
 Environment variables override `.env`; CLI options override the corresponding settings.
 The pricing fields in `.env.example` control estimated cost and should match the selected model.
-Missing or mismatched pricing produces a null estimate. Browser and search costs are excluded.
+The example uses Gemini's free-tier rates; choose a free-tier project/model with available quota.
+Paid accounts require the corresponding paid rates. Missing or mismatched pricing produces a null
+estimate. Browser and search costs are excluded. Context budgeting uses a local tokenizer estimate;
+saved usage contains actual provider-reported tokens, including Gemini thinking tokens when present.
 
 ## Tests
 

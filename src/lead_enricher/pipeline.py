@@ -14,6 +14,7 @@ from lead_enricher.confidence import score_result
 from lead_enricher.config import Settings
 from lead_enricher.discovery import Frontier
 from lead_enricher.extraction import ExtractionOutcome, Extractor, OpenAIProvider
+from lead_enricher.gemini import GeminiProvider
 from lead_enricher.models import CompanyResult, Error, RunOutput, Source, utcnow
 from lead_enricher.search import TavilySearch
 from lead_enricher.storage import ensure_destination, save_output
@@ -193,12 +194,17 @@ async def run_batch(
     run = RunOutput(
         run_id=str(uuid4()),
         mode=mode,
-        model=settings.openai_model if mode == "live" else "fixture-adapter",
+        model=settings.model_name if mode == "live" else "fixture-adapter",
         configuration=settings.redacted(),
         warnings=["DEMO: synthetic fixture data; no real company or provider results"]
         if mode == "demo"
         else [],
     )
+    if mode == "live" and settings.llm_provider == "gemini":
+        run.warnings.append(
+            "Gemini context tokens use a local o200k_base estimate; usage contains "
+            "provider-reported counts, including any thinking tokens in output_tokens."
+        )
     slots: list[CompanyResult | None] = [None] * len(domains)
     semaphore = asyncio.Semaphore(settings.domain_concurrency)
     writer = asyncio.Lock()
@@ -237,10 +243,12 @@ async def run_batch(
 async def enrich(
     domains: list[str], *, settings: Settings | None = None, output: Path | None = None
 ) -> RunOutput:
-    """Enrich public company domains with real Chromium and OpenAI; preserves input order."""
+    """Enrich public domains with Chromium and the selected LLM; preserves input order."""
     settings = settings or Settings()
     settings.require_live_key()
-    provider = OpenAIProvider(settings)
+    provider = (
+        GeminiProvider(settings) if settings.llm_provider == "gemini" else OpenAIProvider(settings)
+    )
     search = TavilySearch(settings)
     try:
         async with BrowserPool(settings) as pool:

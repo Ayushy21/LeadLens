@@ -27,7 +27,7 @@ from lead_enricher.urls import DestinationPolicy, canonical_url
 
 LOGGER = logging.getLogger("leadlens")
 USER_AGENT = "LeadLens/0.1 (public company research)"
-MAX_HTML_BYTES = 5_000_000
+MAX_HTTP_BYTES = 5_000_000
 
 
 class RetrievalFailure(Exception):
@@ -61,7 +61,7 @@ async def safe_get(
                 size = 0
                 async for chunk in response.aiter_bytes():
                     size += len(chunk)
-                    if size > MAX_HTML_BYTES:
+                    if size > MAX_HTTP_BYTES:
                         raise RetrievalFailure("oversize", "HTTP response exceeds size budget")
                     chunks.append(chunk)
                 return httpx.Response(
@@ -421,7 +421,7 @@ class BrowserSession:
                     raise self.route_error
                 source.final_url = page.url
                 html = await page.content()
-                if len(html.encode("utf-8")) > MAX_HTML_BYTES:
+                if len(html.encode("utf-8")) > self.pool.settings.max_html_bytes:
                     raise RetrievalFailure("oversize", "Rendered DOM exceeds size budget")
                 problem = content_problem(html, source.http_status)
                 if problem:

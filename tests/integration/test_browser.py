@@ -169,3 +169,14 @@ async def test_slow_page_bounded_retries_cleanup(settings, local_site):
             assert not session.context.pages
         assert not pool.browser.contexts
     assert calls["/slow"] == 2
+
+
+@pytest.mark.browser
+async def test_configured_rendered_page_size_limit(settings, local_site):
+    origin, _ = local_site
+    settings.max_html_bytes = 100
+    async with BrowserPool(settings, DestinationPolicy(frozenset({origin}))) as pool:
+        async with pool.session("lumenforge.test", Deadline(10)) as session:
+            source, error = await session.fetch(make_source(origin + "/"))
+            assert error.code == "oversize" and not source.usable
+            assert not session.context.pages

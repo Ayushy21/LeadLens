@@ -134,6 +134,17 @@ def test_trimmed_testimonial_cannot_create_employee(source, extraction):
     assert not result.team_members and issues
 
 
+@pytest.mark.parametrize("title", ["founders", "co-founders", "cofounders"])
+def test_plural_founder_relationship_is_supported(source, extraction, title):
+    excerpt = f"Mira Chen and Arun Patel are the {title} of LumenForge."
+    source.text += "\n" + excerpt
+    member = extraction.team_members[0]
+    member.relationship_evidence = [Citation(source_id=source.source_id, excerpt=excerpt)]
+    result, issues = ground(extraction, [source], "lumenforge.test")
+    assert not issues
+    assert result.team_members[0].name == "Mira Chen"
+
+
 def test_unknowns_remain_unknown(source, extraction):
     extraction.company_name.value = None
     extraction.overview_sentence_1.value = None

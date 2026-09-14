@@ -149,6 +149,15 @@ async def test_bounded_semantic_repair_usage(settings, source, extraction):
     result = await Extractor(settings, provider).extract([source], "lumenforge.test", Deadline(10))
     assert result.completed and len(provider.requests) == 2
     assert "role" in provider.requests[1][1]
+    assert "Mira Chen" in provider.requests[1][1]
+    assert provider.requests[0][0].startswith("Target company domain: lumenforge.test\n")
+    draft = json.loads(provider.requests[1][1].split("\n", 1)[1])["validated_draft"]
+    assert draft["team_members"] == [{"name": "Mira Chen", "role": None, "linkedin_url": None}]
+    assert draft["company_overview"]
+    assert (
+        extraction.overview_sentence_1.evidence[0].model_dump()
+        in draft["field_evidence"]["company_overview"]
+    )
     assert result.usage.input_tokens == 200 and result.usage.cached_input_tokens == 40
 
 
