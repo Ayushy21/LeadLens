@@ -1,0 +1,15 @@
+{
+  "python": "3.11.14",
+  "leadlens": "0.1.0",
+  "playwright": "1.62.0",
+  "pydantic": "2.13.5",
+  "openai": "2.54.0",
+  "tiktoken": "0.14.0",
+  "httpx": "0.28.1",
+  "openai_key_present": false,
+  "optional_search_enabled": false,
+  "tavily_key_present": false,
+  "output_writable": true,
+  "chromium_launch": true,
+  "openai_action": "Set OPENAI_API_KEY in .env; doctor does not call the LLM"
+}

@@ -1,0 +1,2 @@
+* text=auto eol=lf
+src/lead_enricher/tokenizer_cache/* -text

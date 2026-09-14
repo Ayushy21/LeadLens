@@ -1,0 +1,249 @@
+{
+  "schema_version": "1.0",
+  "run_id": "668e5a94-527d-4f59-8574-109021b698d3",
+  "mode": "demo",
+  "started_at": "2026-09-11T16:23:13.705185Z",
+  "finished_at": "2026-09-11T16:23:14.175977Z",
+  "model": "fixture-adapter",
+  "configuration": {
+    "openai_model": "gpt-4.1-mini",
+    "enable_search": false,
+    "max_pages_per_domain": 3,
+    "max_depth": 2,
+    "domain_concurrency": 2,
+    "navigation_timeout_ms": 30000,
+    "render_wait_ms": 5000,
+    "http_timeout_seconds": 15.0,
+    "llm_timeout_seconds": 45.0,
+    "domain_budget_seconds": 180.0,
+    "max_context_tokens": 8000,
+    "max_output_tokens": 3500,
+    "max_llm_requests_per_domain": 4,
+    "headed": false,
+    "pricing_model": null,
+    "input_price_per_million": null,
+    "cached_input_price_per_million": null,
+    "output_price_per_million": null,
+    "pricing_source": null,
+    "pricing_verified_at": null
+  },
+  "results": [
+    {
+      "input_domain": "lumenforge.test",
+      "normalized_domain": "lumenforge.test",
+      "status": "success",
+      "company_name": "LumenForge",
+      "company_overview": "LumenForge builds workflow tools for laboratory teams. Its software organizes experiments and shared equipment schedules.",
+      "target_audience": "Built for laboratory managers and research teams.",
+      "contact_points": [
+        {
+          "email": "hello@lumenforge.test",
+          "category": "other_business",
+          "evidence": [
+            {
+              "source_id": "page-1",
+              "excerpt": "Public email: hello@lumenforge.test | Contact our team",
+              "source_url": "https://lumenforge.test/"
+            }
+          ],
+          "verification_status": "publicly_observed_not_deliverability_verified"
+        }
+      ],
+      "team_members": [
+        {
+          "name": "Mira Chen",
+          "role": "founder",
+          "linkedin_url": null,
+          "linkedin_status": "not_found",
+          "relationship_evidence": [
+            {
+              "source_id": "page-1",
+              "excerpt": "Mira Chen is the founder of LumenForge.",
+              "source_url": "https://lumenforge.test/"
+            }
+          ],
+          "role_evidence": [
+            {
+              "source_id": "page-1",
+              "excerpt": "Mira Chen is the founder of LumenForge.",
+              "source_url": "https://lumenforge.test/"
+            }
+          ],
+          "profile_evidence": [],
+          "linkedin_candidates": []
+        }
+      ],
+      "confidence_score": 0.9,
+      "confidence_breakdown": {
+        "overview_supported": 1.0,
+        "audience_supported": 1.0,
+        "public_contact_present": 1.0,
+        "named_leader_with_supported_role_present": 1.0,
+        "directly_supported_linkedin_fraction": 0.0,
+        "retrieval_success_fraction": 1.0,
+        "explanation": "Evidence/completeness heuristic; not a calibrated probability of correctness"
+      },
+      "field_evidence": {
+        "company_name": [
+          {
+            "source_id": "page-1",
+            "excerpt": "LumenForge",
+            "source_url": "https://lumenforge.test/"
+          }
+        ],
+        "company_overview": [
+          {
+            "source_id": "page-1",
+            "excerpt": "LumenForge builds workflow tools for laboratory teams.",
+            "source_url": "https://lumenforge.test/"
+          },
+          {
+            "source_id": "page-1",
+            "excerpt": "Its software organizes experiments and shared equipment schedules.",
+            "source_url": "https://lumenforge.test/"
+          }
+        ],
+        "target_audience": [
+          {
+            "source_id": "page-1",
+            "excerpt": "Built for laboratory managers and research teams.",
+            "source_url": "https://lumenforge.test/"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "page-1",
+          "requested_url": "https://lumenforge.test/",
+          "final_url": "https://lumenforge.test/",
+          "kind": "first_party_html",
+          "retrieval_method": "fixture",
+          "retrieved_at": "2026-09-11T16:23:13.714254Z",
+          "http_status": 200,
+          "usable": true,
+          "selection_reason": "homepage",
+          "depth": 0,
+          "html_bytes": 558,
+          "cleaned_text_chars": 286,
+          "text": "LumenForge\nLumenForge builds workflow tools for laboratory teams.\nIts software organizes experiments and shared equipment schedules.\nBuilt for laboratory managers and research teams.\nOur team\nMira Chen is the founder of LumenForge.\nPublic email: hello@lumenforge.test | Contact our team",
+          "links": [
+            {
+              "url": "https://lumenforge.test/company",
+              "text": "Our company",
+              "nearby_text": "Our company"
+            },
+            {
+              "url": "https://lumenforge.test/contact",
+              "text": "Contact",
+              "nearby_text": "Contact"
+            }
+          ],
+          "email_candidates": [
+            "hello@lumenforge.test"
+          ],
+          "search_query": null,
+          "title": "LumenForge"
+        },
+        {
+          "source_id": "page-2",
+          "requested_url": "https://lumenforge.test/company",
+          "final_url": "https://lumenforge.test/company",
+          "kind": "first_party_html",
+          "retrieval_method": "fixture",
+          "retrieved_at": "2026-09-11T16:23:13.733804Z",
+          "http_status": 200,
+          "usable": true,
+          "selection_reason": "discovered: Our company (priority 1)",
+          "depth": 1,
+          "html_bytes": 558,
+          "cleaned_text_chars": 286,
+          "text": "LumenForge\nLumenForge builds workflow tools for laboratory teams.\nIts software organizes experiments and shared equipment schedules.\nBuilt for laboratory managers and research teams.\nOur team\nMira Chen is the founder of LumenForge.\nPublic email: hello@lumenforge.test | Contact our team",
+          "links": [
+            {
+              "url": "https://lumenforge.test/company",
+              "text": "Our company",
+              "nearby_text": "Our company"
+            },
+            {
+              "url": "https://lumenforge.test/contact",
+              "text": "Contact",
+              "nearby_text": "Contact"
+            }
+          ],
+          "email_candidates": [
+            "hello@lumenforge.test"
+          ],
+          "search_query": null,
+          "title": "LumenForge"
+        },
+        {
+          "source_id": "page-3",
+          "requested_url": "https://lumenforge.test/contact",
+          "final_url": "https://lumenforge.test/contact",
+          "kind": "first_party_html",
+          "retrieval_method": "fixture",
+          "retrieved_at": "2026-09-11T16:23:13.736808Z",
+          "http_status": 200,
+          "usable": true,
+          "selection_reason": "discovered: Contact (priority 2)",
+          "depth": 1,
+          "html_bytes": 558,
+          "cleaned_text_chars": 286,
+          "text": "LumenForge\nLumenForge builds workflow tools for laboratory teams.\nIts software organizes experiments and shared equipment schedules.\nBuilt for laboratory managers and research teams.\nOur team\nMira Chen is the founder of LumenForge.\nPublic email: hello@lumenforge.test | Contact our team",
+          "links": [
+            {
+              "url": "https://lumenforge.test/company",
+              "text": "Our company",
+              "nearby_text": "Our company"
+            },
+            {
+              "url": "https://lumenforge.test/contact",
+              "text": "Contact",
+              "nearby_text": "Contact"
+            }
+          ],
+          "email_candidates": [
+            "hello@lumenforge.test"
+          ],
+          "search_query": null,
+          "title": "LumenForge"
+        }
+      ],
+      "crawl": {
+        "attempted_pages": 3,
+        "usable_pages": 3,
+        "duplicate_pages": 2,
+        "html_bytes": 1674,
+        "cleaned_text_chars": 858,
+        "estimated_context_tokens": 154,
+        "estimated_request_tokens": 1423,
+        "dropped_chunks": 0,
+        "duration_seconds": 0.453
+      },
+      "usage": {
+        "input_tokens": 0,
+        "cached_input_tokens": 0,
+        "output_tokens": 0,
+        "request_count": 1,
+        "reported_response_count": 0,
+        "response_ids": [],
+        "request_ids": [],
+        "models": [
+          "fixture-adapter"
+        ],
+        "accounting_complete": false,
+        "estimated_llm_cost_usd": null,
+        "cost_reason": "Pricing absent or does not match configured model",
+        "cost_scope": "Reported LLM usage only; excludes browser, network, and search costs"
+      },
+      "search_requests": 0,
+      "estimated_search_cost_usd": null,
+      "warnings": [],
+      "errors": []
+    }
+  ],
+  "complete": true,
+  "warnings": [
+    "DEMO: synthetic fixture data; no real company or provider results"
+  ]
+}

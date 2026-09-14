@@ -1,0 +1,22 @@
+{
+  "command": [
+    "uv",
+    "run",
+    "python",
+    "-m",
+    "lead_enricher",
+    "run",
+    "--domains",
+    "postman.com",
+    "supabase.com",
+    "vapi.ai",
+    "--output",
+    "output.json"
+  ],
+  "started_at": "2026-09-11T16:22:26.376526+00:00",
+  "finished_at": "2026-09-11T16:22:28.346632+00:00",
+  "exit_code": 2,
+  "stdout": "",
+  "stderr": "Configuration/output error: Set OPENAI_API_KEY in .env or the environment, then rerun; demo is offline\n",
+  "output_exists": false
+}
